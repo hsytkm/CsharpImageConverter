@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpImageConverter.App", "CsharpImageConverter.App\CsharpImageConverter.App.csproj", "{A975FE98-9DD6-4621-9CDA-CF14DA614DDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A975FE98-9DD6-4621-9CDA-CF14DA614DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A975FE98-9DD6-4621-9CDA-CF14DA614DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A975FE98-9DD6-4621-9CDA-CF14DA614DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A975FE98-9DD6-4621-9CDA-CF14DA614DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDD02DC1-D3ED-4A9C-BF23-9FCC90F02228}
+	EndGlobalSection
+EndGlobal
