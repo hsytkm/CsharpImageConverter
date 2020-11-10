@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CsharpImageConverter.App.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,9 @@ namespace CsharpImageConverter.App
     /// </summary>
     public partial class App : Application
     {
+        internal static new App Current => (App)Application.Current;
+        internal ModelMain ModelMain => new ModelMain();
+
+
     }
 }

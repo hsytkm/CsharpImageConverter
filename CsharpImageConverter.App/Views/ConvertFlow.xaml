@@ -5,14 +5,39 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:v="clr-namespace:CsharpImageConverter.App.Views"
+    xmlns:vm="clr-namespace:CsharpImageConverter.App.ViewModels"
+    xmlns:common="clr-namespace:CsharpImageConverter.App.Common"
+    xmlns:markup="clr-namespace:CsharpImageConverter.App.Views.MarkupExtensions"
     mc:Ignorable="d" 
     d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <vm:ConvertFlowViewModel />
+    </UserControl.DataContext>
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" >
             <TextBlock Text="1" />
-            <ComboBox />
+            <ComboBox ItemsSource="{Binding InputImageFormatItems, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedInputImageFormat.Value, Mode=TwoWay}" />
         </DockPanel>
-        
+
+        <DockPanel DockPanel.Dock="Top" >
+            <TextBlock Text="2" />
+            <ComboBox ItemsSource="{Binding ConvertImageClassItems, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedConvertImageClass.Value, Mode=TwoWay}" />
+        </DockPanel>
+
+
+
+
+
+        <DockPanel DockPanel.Dock="Bottom" >
+            <TextBlock Text="9" />
+            <ComboBox ItemsSource="{Binding OutputImageFormatItems, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedOutputImageFormat.Value, Mode=TwoWay}" />
+        </DockPanel>
+
+        <Border/>
     </DockPanel>
 </UserControl>

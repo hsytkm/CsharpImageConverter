@@ -5,12 +5,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:v="clr-namespace:CsharpImageConverter.App.Views"
+    xmlns:vm="clr-namespace:CsharpImageConverter.App.ViewModels"
     mc:Ignorable="d"
     Title="CsharpImageConverter"
-    Height="450" Width="800">
+    Height="450" Width="500">
 
-    <DockPanel>
-        <v:ConvertFlow DockPanel.Dock="Left" />
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+    
+    <DockPanel Margin="10" >
+        <v:ConvertFlow DockPanel.Dock="Left" Margin="0,0,10,0" />
+
+        <Image HorizontalAlignment="Left" VerticalAlignment="Top"
+               Source="{Binding ImageSource.Value, Mode=OneWay}" />
 
     </DockPanel>
 </Window>
