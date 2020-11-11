@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("CsharpImageConverter.Benchmark")]
+[assembly: InternalsVisibleTo("CsharpImageConverter.Test")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
