@@ -13,9 +13,6 @@ using System.Windows.Shapes;
 
 namespace CsharpImageConverter.App.Views
 {
-    /// <summary>
-    /// ConvertFlow.xaml の相互作用ロジック
-    /// </summary>
     public partial class ConvertFlow : UserControl
     {
         public ConvertFlow()

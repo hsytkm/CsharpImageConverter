@@ -9,14 +9,11 @@ using System.Windows;
 
 namespace CsharpImageConverter.App
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         internal static new App Current => (App)Application.Current;
-        internal ModelMain ModelMain => new ModelMain();
 
+        internal ModelMain ModelMain => new ModelMain();
 
     }
 }

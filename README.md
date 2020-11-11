@@ -1,31 +1,62 @@
-## 画像型
+# CsharpImageConverter
+
+
+## 画像クラス
+
+- System.Windows.Media.Imaging.BitmapSource
 
 - System.Drawing.Bitmap
-- System.Windows.Media.Imaging.BitmapSource
-- BitmapPixels(自作)
 
+- ImagePixels(自作)
+
+- ImageSharp
+
+- OpenCV::Mat
+
+- OpenCVSharp.Mat
 
 
 ## 画像ファイルフォーマット
 
 - BMP
+
 - JPEG
+
 - PNG
-
-
-
-## System.Drawing.Bitmap
-
-- 画像の読み込み（多分何でもできる）
-- ToBitmapSource
-- 画像の書き出し
-
-
-
 
 
 ## System.Windows.Media.Imaging.BitmapSource
 
-- 画像の読み込み（多分何でもできる）
+- 画像ファイルの読み込み (Png / Bmp / Jpeg)
+
+- 画像ファイルの書き出し
+
+- 画素値の読み出し
+
 - ToDrawingBitmap
-- 
+
+
+## System.Drawing.Bitmap
+
+- 画像ファイルの読み込み (Png / Bmp / Jpeg)
+
+- 画像ファイルの書き出し
+
+- 画素値の読み出し
+
+- ToBitmapSource(ToWriteableBitmap)
+
+
+## ImagePixels(自作)
+
+- ToDrawingBitmap
+
+- ToBitmapSource(ToWriteableBitmap)
+
+
+## ImageSharp
+
+## OpenCV::Mat
+
+## OpenCVSharp.Mat
+
