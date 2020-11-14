@@ -59,4 +59,12 @@ namespace CsharpImageConverter.App.Models
                 Marshal.FreeCoTaskMem(UnmanagedPtr);
         }
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly ref struct Pixel3ch
+    {
+        public readonly byte Ch0;
+        public readonly byte Ch1;
+        public readonly byte Ch2;
+    }
 }

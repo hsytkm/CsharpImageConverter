@@ -7,7 +7,19 @@ namespace CsharpImageConverter.Benchmark
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<MyTest>();
+#if false
+            // All tests
+            BenchmarkRunner.Run<LoadImageFromFile>();
+            BenchmarkRunner.Run<SaveImageToFile>();   //動作怪しい…
+            BenchmarkRunner.Run<ReadPixels>();
+            BenchmarkRunner.Run<DrawingBitmapToXXX>();
+            BenchmarkRunner.Run<BitmapSourceToXXX>();
+            BenchmarkRunner.Run<ImagePixelsToXXX>();
+            BenchmarkRunner.Run<ImageSharpBgr24ToXXX>();
+#else
+            BenchmarkRunner.Run<LoadImageFromFile>();
+#endif
+
         }
     }
 }

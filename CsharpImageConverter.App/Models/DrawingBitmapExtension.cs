@@ -41,7 +41,7 @@ namespace CsharpImageConverter.App.Models
 
         #region ToFile
         /// <summary>画像をファイルに保存します</summary>
-        public static void ToFileBody(Bitmap bitmap, string savePath, ImageFormat format)
+        private static void ToFileImpl(Bitmap bitmap, string savePath, ImageFormat format)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
             if (File.Exists(savePath)) throw new ArgumentException("Save file is already exist.");
@@ -51,16 +51,44 @@ namespace CsharpImageConverter.App.Models
 
         /// <summary>画像をpngファイルに保存します</summary>
         public static void ToPngFile(this Bitmap bitmap, string savePath)
-            => ToFileBody(bitmap, savePath, ImageFormat.Png);
+            => ToFileImpl(bitmap, savePath, ImageFormat.Png);
 
         /// <summary>画像をbmpファイルに保存します</summary>
         public static void ToBmpFile(this Bitmap bitmap, string savePath)
-            => ToFileBody(bitmap, savePath, ImageFormat.Bmp);
+            => ToFileImpl(bitmap, savePath, ImageFormat.Bmp);
 
         /// <summary>画像をjpgファイルに保存します</summary>
         public static void ToJpegFile(this Bitmap bitmap, string savePath)
-            => ToFileBody(bitmap, savePath, ImageFormat.Jpeg);
+            => ToFileImpl(bitmap, savePath, ImageFormat.Jpeg);
 
+        /// <summary>画像をtiffファイルに保存します</summary>
+        public static void ToTiffFile(this Bitmap bitmap, string savePath)
+            => ToFileImpl(bitmap, savePath, ImageFormat.Tiff);
+
+        /// <summary>保存ファイルPATHの拡張子に応じた画像を保存します</summary>
+        public static void ToImageFile(this Bitmap bitmap, string savePath)
+        {
+            var extension = Path.GetExtension(savePath);
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                    ToJpegFile(bitmap, savePath);
+                    break;
+                case ".bmp":
+                    ToBmpFile(bitmap, savePath);
+                    break;
+                case ".png":
+                    ToPngFile(bitmap, savePath);
+                    break;
+                case ".tif":
+                case ".tiff":
+                    ToTiffFile(bitmap, savePath);
+                    break;
+                default:
+                    throw new NotSupportedException(extension);
+            }
+        }
         #endregion
 
         #region ReadPixels
@@ -122,7 +150,7 @@ namespace CsharpImageConverter.App.Models
         }
         #endregion
 
-        #region ToXXX
+        #region ToBitmapSource
 
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
         public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource1(this Bitmap bitmap)
@@ -141,7 +169,7 @@ namespace CsharpImageConverter.App.Models
             return bitmapSource;
         }
 
-        /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
+        /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します(実装1よりもほんのちょびっと遅い気がする。どちらでも良い)</summary>
         public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource2(this Bitmap bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
@@ -186,10 +214,24 @@ namespace CsharpImageConverter.App.Models
             }
         }
 
+        /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
+        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this Bitmap bitmap)
+        {
+            bool isWindows = true;
+            if (isWindows)
+                return ToBitmapSourceFast(bitmap);
+
+            return ToBitmapSource1(bitmap);
+        }
+
+        #endregion
+
+        #region ToWriteableBitmap
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します</summary>
-        public static System.Windows.Media.Imaging.WriteableBitmap UpdateWriteableBitmap(this Bitmap bitmap, System.Windows.Media.Imaging.WriteableBitmap writeableBitmap)
+        public static void CopyToWriteableBitmap(this Bitmap bitmap, System.Windows.Media.Imaging.WriteableBitmap writeableBitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
+            if (writeableBitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
             if (writeableBitmap.PixelWidth != bitmap.Width) throw new ArgumentException("Different Width");
             if (writeableBitmap.PixelHeight != bitmap.Height) throw new ArgumentException("Different Height");
             if (writeableBitmap.GetBytesPerPixel() != bitmap.GetBytesPerPixel()) throw new ArgumentException("Different BytesPerPixel");
@@ -206,20 +248,116 @@ namespace CsharpImageConverter.App.Models
             {
                 bitmap.UnlockBits(bitmapData);
             }
-            return writeableBitmap;
+            //writeableBitmap.Freeze();
         }
 
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap を新たに作成します</summary>
         public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(this Bitmap bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
+            if (bitmap.GetBytesPerPixel() != 3) throw new NotSupportedException("BytesPerPixel");
 
             var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
                 bitmap.Width, bitmap.Height, _dpi, _dpi, System.Windows.Media.PixelFormats.Bgr24, null);
 
-            return bitmap.UpdateWriteableBitmap(writeableBitmap);
+            CopyToWriteableBitmap(bitmap, writeableBitmap);
+
+            //writeableBitmap.Freeze();
+            return writeableBitmap;
+        }
+        #endregion
+
+        #region ToImagePixels
+        /// <summary>ImagePixels に画素値をコピーします</summary>
+        public static void CopyToImagePixels(this Bitmap bitmap, ref ImagePixels pixels)
+        {
+            if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
+            if (pixels.IsInvalid()) throw new ArgumentException("Invalid Pixels");
+            if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
+            if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
+            if (bitmap.GetBytesPerPixel() != pixels.BytesPerPixel) throw new NotImplementedException("Different BytesPerPixel");
+
+            var bytesPerPixel = bitmap.GetBytesPerPixel();
+            var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            try
+            {
+                unsafe
+                {
+                    var srcHead = (byte*)bitmapData.Scan0;
+                    var srcStride = bitmapData.Stride;
+                    var srcPtrTail = srcHead + (bitmap.Height * srcStride);
+
+                    var destHead = (byte*)pixels.PixelsPtr;
+                    var destStride = pixels.Stride;
+
+                    var columnLength = bitmap.Width * bytesPerPixel;
+
+                    // BytesPerPixel の一致を前提に行を丸ごとコピー
+                    for (byte* srcPtr = srcHead, destPtr = destHead;
+                         srcPtr < srcPtrTail;
+                         srcPtr += srcStride, destPtr += destStride)
+                    {
+                        UnsafeExtensions.MemCopy(destPtr, srcPtr, columnLength);
+                    }
+                }
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
         }
 
+        /// <summary>ImagePixelsContainer を作成して返します</summary>
+        public static ImagePixelsContainer ToImagePixelsContainer(this Bitmap bitmap)
+        {
+            if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
+
+            var container = new ImagePixelsContainer(bitmap.Width, bitmap.Height);
+            var pixels = container.Pixels;
+            CopyToImagePixels(bitmap, ref pixels);
+
+            return container;
+        }
+        #endregion
+
+        #region ToImageSharpBgr24
+        /// <summary>SixLabors.ImageSharp.Image に変換します</summary>
+        public static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgr24> ToImageSharpBgr24(this Bitmap bitmap)
+        {
+            if (bitmap.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (bitmap.GetBytesPerPixel() != 3) throw new NotSupportedException("Invalid BytesPerPixel");
+
+            var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgr24>(bitmap.Width, bitmap.Height);
+            var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            try
+            {
+                unsafe
+                {
+                    var srcPtr = (byte*)bitmapData.Scan0;
+                    var srcStride = bitmapData.Stride;
+                    var height = image.Height;
+                    var width = image.Width;
+
+                    for (var y = 0; y < height; ++y, srcPtr += srcStride)
+                    {
+                        var pixelRowSpan = image.GetPixelRowSpan(y);
+                        var src = (SixLabors.ImageSharp.PixelFormats.Bgr24*)srcPtr;
+
+                        for (var x = 0; x < width; ++x)
+                        {
+                            pixelRowSpan[x] = *(src++);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
+            return image;
+        }
         #endregion
 
     }

@@ -13,9 +13,9 @@ namespace CsharpImageConverter.App.Models
         {
             ImageSource = new ReactivePropertySlim<BitmapSource>();
 
-            var bitmapSource = (BitmapSource)BitmapSourceExtension.FromFile(@"Assets\image.jpg");
+            var bitmapSource = (BitmapSource)BitmapSourceExtension.FromFile(AppCommonSettings.JpegFilePath);
 
-            //BitmapSourceExtension.ToPngFile(bitmapSource, @"_image.png");
+            //BitmapSourceExtension.ToPngFile(bitmapSource, AppCommonSettings.PngFilePath);
 
 
             ImageSource.Value = bitmapSource;
