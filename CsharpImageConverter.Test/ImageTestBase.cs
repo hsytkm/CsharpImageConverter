@@ -25,6 +25,13 @@ namespace CsharpImageConverter.Test
                 new object[] { CoreContextSettings.TiffFilePath, ".tif" },
                 //new object[] { AppCommonSettings.JpegFilePath, ".jpg" },
             };
-        
+
+        /// <summary>一時ファイルPATHを返します</summary>
+        internal static string GetTempFileName()
+        {
+            var path = System.IO.Path.GetTempFileName();
+            System.IO.File.Delete(path);
+            return path;
+        }
     }
 }

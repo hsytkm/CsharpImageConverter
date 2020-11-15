@@ -38,7 +38,7 @@
 |                        | BitmapSource | Drawing | Image\<Bgr24> | MyImagePixels |
 | ---------------------- | ------------ | ------- | ------------- | ------------- |
 | From ImageFile         | Done         | Done    | Done          | **Yet**       |
-| To ImageFile           | Done         | Done    | Done          | **Yet**       |
+| To ImageFile           | Done         | Done    | Done          | **Done?**     |
 | Read Pixels            | Done         | Done    | Done          | Done          |
 | To BitmapSource        | -            | Done    | Done          | Done          |
 | Update WriteableBitmap | Done         | Done    | Done          | Done          |

@@ -66,10 +66,7 @@ namespace CsharpImageConverter.Test
             var bitmap0 = BitmapSourceExtension.FromFile(imagePath);
             var baseAves = bitmap0.GetChannelsAverage().ToList();
 
-            var savePath = System.IO.Path.GetTempFileName();
-            System.IO.File.Delete(savePath);
-
-            savePath += extension;
+            var savePath = GetTempFileName() + extension;
             bitmap0.ToImageFile(savePath);
 
             var bitmap1 = BitmapSourceExtension.FromFile(savePath);

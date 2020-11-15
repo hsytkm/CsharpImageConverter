@@ -58,14 +58,6 @@ namespace CsharpImageConverter.Test
             aves31.Is(avesBase);
         }
 
-        /// <summary>ˆêŽžƒtƒ@ƒCƒ‹PATH‚ð•Ô‚µ‚Ü‚·</summary>
-        private static string GetTempFileName()
-        {
-            var path = System.IO.Path.GetTempFileName();
-            System.IO.File.Delete(path);
-            return path;
-        }
-
         [Theory]
         [MemberData(nameof(GetUncompressedImageFilePaths))]
         public void FileLoadSave(string imagePath, string extension)
