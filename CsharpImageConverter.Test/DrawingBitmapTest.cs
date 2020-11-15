@@ -43,11 +43,22 @@ namespace CsharpImageConverter.Test
             aves10.Count.Is(3);
             aves10.Is(avesBase);
 
-            // ToImagePixels
+            bitmap.CopyToWriteableBitmap(writeable);
+            var aves11 = writeable.GetChannelsAverage().ToList();
+            aves11.Count.Is(3);
+            aves11.Is(avesBase);
+
+            // ToImagePixelsContainer
             using var container = bitmap.ToImagePixelsContainer();
-            var aves20 = container.Pixels.GetChannelsAverage().ToList();
+            var pixels = container.Pixels;
+            var aves20 = pixels.GetChannelsAverage().ToList();
             aves20.Count.Is(3);
             aves20.Is(avesBase);
+
+            bitmap.CopyToImagePixels(ref pixels);
+            var aves21 = pixels.GetChannelsAverage().ToList();
+            aves21.Count.Is(3);
+            aves21.Is(avesBase);
 
             // ToImageSharpBgr24
             using var image = bitmap.ToImageSharpBgr24();

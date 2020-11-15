@@ -175,13 +175,23 @@ namespace CsharpImageConverter.Core
             if (writeableBitmap.PixelHeight != bitmapSource.PixelHeight) throw new ArgumentException("Different Height");
             if (writeableBitmap.GetBytesPerPixel() != bitmapSource.GetBytesPerPixel()) throw new ArgumentException("Different BytesPerPixel");
 
-            var srcBytesPerPixel = bitmapSource.GetBytesPerPixel();
-            int srcStride = bitmapSource.PixelWidth * srcBytesPerPixel;
+            int srcStride = bitmapSource.PixelWidth * bitmapSource.GetBytesPerPixel();
+            var fullRect = new Int32Rect(0, 0, bitmapSource.PixelWidth, bitmapSource.PixelHeight);
 
-            var bs = new byte[srcStride * bitmapSource.PixelHeight];
-            bitmapSource.CopyPixels(bs, srcStride, 0);
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, bitmapSource.PixelWidth, bitmapSource.PixelHeight), bs, srcStride, 0);
+            try
+            {
+                writeableBitmap.Lock();
 
+                bitmapSource.CopyPixels(fullRect,
+                    writeableBitmap.BackBuffer,
+                    writeableBitmap.BackBufferStride * writeableBitmap.PixelHeight,
+                    srcStride);
+            }
+            finally
+            {
+                writeableBitmap.AddDirtyRect(fullRect);
+                writeableBitmap.Unlock();
+            }
             //writeableBitmap.Freeze();
         }
 
@@ -190,10 +200,7 @@ namespace CsharpImageConverter.Core
         {
             if (bitmapSource.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var writeableBitmap = new WriteableBitmap(bitmapSource.PixelWidth, bitmapSource.PixelHeight,
-                bitmapSource.DpiX, bitmapSource.DpiY, bitmapSource.Format, null);
-
-            CopyToWriteableBitmap(bitmapSource, writeableBitmap);
+            var writeableBitmap = new WriteableBitmap(bitmapSource);
 
             //writeableBitmap.Freeze();
             return writeableBitmap;

@@ -5,8 +5,6 @@ namespace CsharpImageConverter.Core
 {
     public static class ImagePixelsExtension
     {
-        private const double _dpi = 96.0;
-
         #region ReadPixels
         /// <summary>指定エリアの画素平均値を取得します</summary>
         public static IReadOnlyCollection<double> GetChannelsAverage(in this ImagePixels pixels, int rectX, int rectY, int rectWidth, int rectHeight)
@@ -122,7 +120,8 @@ namespace CsharpImageConverter.Core
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
-                pixels.Width, pixels.Height, _dpi, _dpi,
+                pixels.Width, pixels.Height,
+                CoreContextSettings.DpiX, CoreContextSettings.DpiY,
                 System.Windows.Media.PixelFormats.Bgr24, null,
                 pixels.PixelsPtr, pixels.Height * pixels.Stride, pixels.Stride);
 
@@ -156,11 +155,10 @@ namespace CsharpImageConverter.Core
 
             var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
                 pixels.Width, pixels.Height,
-                _dpi, _dpi, System.Windows.Media.PixelFormats.Bgr24, null);
+                CoreContextSettings.DpiX, CoreContextSettings.DpiY,
+                System.Windows.Media.PixelFormats.Bgr24, null);
 
-            writeableBitmap.WritePixels(
-                new System.Windows.Int32Rect(0, 0, pixels.Width, pixels.Height),
-                pixels.PixelsPtr, pixels.AllocSize, pixels.Stride);
+            CopyToWriteableBitmap(pixels, writeableBitmap);
 
             //writeableBitmap.Freeze();
             return writeableBitmap;

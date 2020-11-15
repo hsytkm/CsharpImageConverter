@@ -40,31 +40,26 @@ namespace CsharpImageConverter.Core
     public class ImagePixelsContainer : IDisposable
     {
         public readonly ImagePixels Pixels;
-        private readonly IntPtr UnmanagedPtr;
+        private IntPtr _allocatedMemoryPointer;
 
         private ImagePixelsContainer(int width, int height, int bytesPerPixels)
         {
             var stride = width * bytesPerPixels;
             var size = stride * height;
 
-            UnmanagedPtr = Marshal.AllocCoTaskMem(size);
-            Pixels = new ImagePixels(width, height, bytesPerPixels, stride, UnmanagedPtr, size);
+            _allocatedMemoryPointer = Marshal.AllocCoTaskMem(size);
+            Pixels = new ImagePixels(width, height, bytesPerPixels, stride, _allocatedMemoryPointer, size);
         }
 
         public ImagePixelsContainer(int width, int height) : this(width, height, 3) { }
 
         public void Dispose()
         {
-            if (UnmanagedPtr != IntPtr.Zero)
-                Marshal.FreeCoTaskMem(UnmanagedPtr);
+            if (_allocatedMemoryPointer != IntPtr.Zero)
+            {
+                Marshal.FreeCoTaskMem(_allocatedMemoryPointer);
+                _allocatedMemoryPointer = IntPtr.Zero;
+            }
         }
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly ref struct Pixel3ch
-    {
-        public readonly byte Ch0;
-        public readonly byte Ch1;
-        public readonly byte Ch2;
     }
 }

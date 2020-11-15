@@ -36,10 +36,15 @@ namespace CsharpImageConverter.Test
             aves10.Is(avesBase);
 
             // ToWriteableBitmap(BitmapSource)
-            var bitmap2 = pixels.ToWriteableBitmap();
-            var aves20 = bitmap2.GetChannelsAverage().ToList();
+            var writeable = pixels.ToWriteableBitmap();
+            var aves20 = writeable.GetChannelsAverage().ToList();
             aves20.Count.Is(3);
             aves20.Is(avesBase);
+
+            pixels.CopyToWriteableBitmap(writeable);
+            var aves21 = writeable.GetChannelsAverage().ToList();
+            aves21.Count.Is(3);
+            aves21.Is(avesBase);
 
             // ToImageSharpBgr24
             using var image = pixels.ToImageSharpBgr24();

@@ -9,8 +9,6 @@ namespace CsharpImageConverter.Core
 {
     public static class DrawingBitmapExtension
     {
-        private const double _dpi = 96.0;
-
         /// <summary>Bitmapに異常がないかチェックします</summary>
         public static bool IsValid(this Bitmap bitmap)
         {
@@ -258,7 +256,9 @@ namespace CsharpImageConverter.Core
             if (bitmap.GetBytesPerPixel() != 3) throw new NotSupportedException("BytesPerPixel");
 
             var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
-                bitmap.Width, bitmap.Height, _dpi, _dpi, System.Windows.Media.PixelFormats.Bgr24, null);
+                bitmap.Width, bitmap.Height,
+                CoreContextSettings.DpiX, CoreContextSettings.DpiY,
+                System.Windows.Media.PixelFormats.Bgr24, null);
 
             CopyToWriteableBitmap(bitmap, writeableBitmap);
 
