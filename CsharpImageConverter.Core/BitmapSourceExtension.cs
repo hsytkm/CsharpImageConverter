@@ -4,9 +4,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
-    static class BitmapSourceExtension
+    public static class BitmapSourceExtension
     {
         /// <summary>BitmapSourceに異常がないかチェックします</summary>
         public static bool IsValid(this BitmapSource bitmap)

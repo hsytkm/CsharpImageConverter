@@ -1,5 +1,4 @@
-using CsharpImageConverter.App.Common;
-using CsharpImageConverter.App.Models;
+using CsharpImageConverter.Core;
 using System;
 using System.Linq;
 using Xunit;

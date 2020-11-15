@@ -1,4 +1,4 @@
-﻿using CsharpImageConverter.App.Common;
+﻿using CsharpImageConverter.Core;
 using System;
 using System.Collections.Generic;
 

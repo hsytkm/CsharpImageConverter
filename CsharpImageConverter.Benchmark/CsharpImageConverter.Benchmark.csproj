@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CsharpImageConverter.App\CsharpImageConverter.App.csproj" />
+    <ProjectReference Include="..\CsharpImageConverter.Core\CsharpImageConverter.Core.csproj" />
   </ItemGroup>
 
 </Project>

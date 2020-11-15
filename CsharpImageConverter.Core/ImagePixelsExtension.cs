@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
-    static class ImagePixelsExtension
+    public static class ImagePixelsExtension
     {
         private const double _dpi = 96.0;
 

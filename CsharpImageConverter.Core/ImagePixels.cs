@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
     // C++型と合わせること
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ImagePixels
+    public readonly struct ImagePixels
     {
         public readonly IntPtr PixelsPtr;
         public readonly int AllocSize;
@@ -37,7 +37,7 @@ namespace CsharpImageConverter.App.Models
         public readonly bool IsInvalid() => !IsValid();
     }
 
-    readonly struct ImagePixelsContainer : IDisposable
+    public readonly struct ImagePixelsContainer : IDisposable
     {
         public readonly ImagePixels Pixels;
         private readonly IntPtr UnmanagedPtr;

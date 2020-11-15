@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CsharpImageConverter.App.Common
+namespace CsharpImageConverter.Core
 {
-    static class AppCommonSettings
+    public static class AppCommonSettings
     {
         public static string JpegFilePath => @"Assets\image.jpg";
         public static string BitmapFilePath => @"Assets\image.bmp";

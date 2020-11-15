@@ -6,9 +6,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
-    static class ImageSharpBgr24Extension
+    public static class ImageSharpBgr24Extension
     {
         /// <summary>Imageに異常がないかチェックします</summary>
         public static bool IsValid(this Image image)

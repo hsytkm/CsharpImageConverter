@@ -1,22 +1,27 @@
-# CsharpImageConverter
+# C# Image Converter
 
 
-## 画像クラス
+
+## Image Classes
 
 - System.Windows.Media.Imaging.BitmapSource
 
+- System.Windows.Media.Imaging.WriteableBitmap
+
 - System.Drawing.Bitmap
 
-- ImagePixels(自作)
+- SixLabors.ImageSharp.Image\<Bgr24\>
 
-- ImageSharp
+- ~~OpenCVSharp.Mat~~
 
-- OpenCV::Mat
+- ~~OpenCV::Mat~~
 
-- OpenCVSharp.Mat
+- MyImagePixels (Bgr24)
+
+  
 
 
-## 画像ファイルフォーマット
+## Image File Format
 
 - BMP
 
@@ -24,39 +29,22 @@
 
 - PNG
 
+- TIFF
 
-## System.Windows.Media.Imaging.BitmapSource
+  
 
-- 画像ファイルの読み込み (Png / Bmp / Jpeg)
+## Table
 
-- 画像ファイルの書き出し
-
-- 画素値の読み出し
-
-- ToDrawingBitmap
-
-
-## System.Drawing.Bitmap
-
-- 画像ファイルの読み込み (Png / Bmp / Jpeg)
-
-- 画像ファイルの書き出し
-
-- 画素値の読み出し
-
-- ToBitmapSource(ToWriteableBitmap)
+|                        | BitmapSource | Drawing | Image\<Bgr24> | MyImagePixels |
+| ---------------------- | ------------ | ------- | ------------- | ------------- |
+| From ImageFile         | Done         | Done    | Done          | **Yet**       |
+| To ImageFile           | Done         | Done    | Done          | **Yet**       |
+| Read Pixels            | Done         | Done    | Done          | Done          |
+| To BitmapSource        | -            | Done    | Done          | Done          |
+| Update WriteableBitmap | Done         | Done    | Done          | Done          |
+| To Drawing.Bitmap      | Done         | -       | Done          | Done          |
+| To Image\<Bgr24>       | Done         | Done    | -             | Done          |
+| To MyImagePixels       | Done         | Done    | Done          | -             |
 
 
-## ImagePixels(自作)
-
-- ToDrawingBitmap
-
-- ToBitmapSource(ToWriteableBitmap)
-
-
-## ImageSharp
-
-## OpenCV::Mat
-
-## OpenCVSharp.Mat
 

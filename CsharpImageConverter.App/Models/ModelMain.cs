@@ -1,4 +1,5 @@
 ﻿using CsharpImageConverter.App.Common;
+using CsharpImageConverter.Core;
 using Reactive.Bindings;
 using System;
 using System.Windows.Media.Imaging;

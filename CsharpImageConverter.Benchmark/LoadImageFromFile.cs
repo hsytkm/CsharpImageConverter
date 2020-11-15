@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using CsharpImageConverter.App.Common;
-using CsharpImageConverter.App.Models;
+using CsharpImageConverter.Core;
 using System;
 using System.Threading.Tasks;
 

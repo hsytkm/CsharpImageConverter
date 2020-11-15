@@ -5,9 +5,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
-    static class DrawingBitmapExtension
+    public static class DrawingBitmapExtension
     {
         private const double _dpi = 96.0;
 

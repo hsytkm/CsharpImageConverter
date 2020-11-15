@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace CsharpImageConverter.App.Models
+namespace CsharpImageConverter.Core
 {
     static class UnsafeExtensions
     {
