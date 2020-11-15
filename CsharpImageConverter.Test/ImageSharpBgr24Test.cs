@@ -8,7 +8,7 @@ namespace CsharpImageConverter.Test
 {
     public class ImageSharpBgr24Test : ImageTestBase, IDisposable
     {
-        private static readonly string _sourceBitmapPath = AppCommonSettings.BitmapFilePath;
+        private static readonly string _sourceBitmapPath = CoreContextSettings.BitmapFilePath;
 
         public ImageSharpBgr24Test() { }
 

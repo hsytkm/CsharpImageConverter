@@ -8,18 +8,47 @@ namespace CsharpImageConverter.App.Models
 {
     class ModelMain : MyBindableBase
     {
-        public IReactiveProperty<BitmapSource> ImageSource { get; }
+        public IReactiveProperty<BitmapSource> ImageSource0 { get; }
+            = new ReactivePropertySlim<BitmapSource>();
+
+        public IReactiveProperty<BitmapSource> ImageSource1 { get; }
+            = new ReactivePropertySlim<BitmapSource>();
 
         public ModelMain()
         {
-            ImageSource = new ReactivePropertySlim<BitmapSource>();
+            LoadImage0(@"Assets\flow0.png");
+            LoadImage1(@"Assets\flow1.png");
+        }
 
-            var bitmapSource = (BitmapSource)BitmapSourceExtension.FromFile(AppCommonSettings.JpegFilePath);
+        private void LoadImage0(string path)
+        {
+            ImageSource0.Value = BitmapSourceExtension.FromFile(path);
+        }
 
-            //BitmapSourceExtension.ToPngFile(bitmapSource, AppCommonSettings.PngFilePath);
+        private void LoadImage1(string path)
+        {
+            var bitmapSource0 = BitmapSourceExtension.FromFile(path);
 
+            using var drawingBitmap1 = bitmapSource0.ToDrawingBitmap();
+            using var container1 = drawingBitmap1.ToImagePixelsContainer();
+            var pixels1 = container1.Pixels;
+            using var image1 = pixels1.ToImageSharpBgr24();
 
-            ImageSource.Value = bitmapSource;
+            var bitmapSource2 = image1.ToBitmapSource();
+            using var image2 = bitmapSource2.ToImageSharpBgr24();
+            using var container2 = image2.ToImagePixelsContainer();
+            var pixels2 = container2.Pixels;
+            using var drawingBitmap2 = pixels2.ToDrawingBitmap();
+
+            using var image3 = drawingBitmap2.ToImageSharpBgr24();
+            using var drawingBitmap3 = image3.ToDrawingBitmap();
+            var bitmapSource3 = drawingBitmap2.ToBitmapSource();
+
+            using var container3 = bitmapSource3.ToImagePixelsContainer();
+            var pixels3 = container3.Pixels;
+            var bitmapSource4 = pixels3.ToBitmapSource();
+
+            ImageSource1.Value = bitmapSource4;
         }
     }
 }

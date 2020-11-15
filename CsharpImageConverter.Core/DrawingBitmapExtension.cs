@@ -153,7 +153,7 @@ namespace CsharpImageConverter.Core
         #region ToBitmapSource
 
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
-        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource1(this Bitmap bitmap)
+        internal static System.Windows.Media.Imaging.BitmapSource ToBitmapSource1(this Bitmap bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
@@ -170,7 +170,7 @@ namespace CsharpImageConverter.Core
         }
 
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します(実装1よりもほんのちょびっと遅い気がする。どちらでも良い)</summary>
-        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource2(this Bitmap bitmap)
+        internal static System.Windows.Media.Imaging.BitmapSource ToBitmapSource2(this Bitmap bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
@@ -194,7 +194,7 @@ namespace CsharpImageConverter.Core
         private static extern bool DeleteObject(IntPtr hObject);
 
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
-        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSourceFast(this Bitmap bitmap)
+        internal static System.Windows.Media.Imaging.BitmapSource ToBitmapSourceFast(this Bitmap bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
@@ -275,9 +275,10 @@ namespace CsharpImageConverter.Core
             if (pixels.IsInvalid()) throw new ArgumentException("Invalid Pixels");
             if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
             if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
-            if (bitmap.GetBytesPerPixel() != pixels.BytesPerPixel) throw new NotImplementedException("Different BytesPerPixel");
 
-            var bytesPerPixel = bitmap.GetBytesPerPixel();
+            var srcBytesPerPixel = bitmap.GetBytesPerPixel();
+            if (srcBytesPerPixel < pixels.BytesPerPixel) throw new NotImplementedException("Different BytesPerPixel");
+
             var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 
             try
@@ -290,15 +291,33 @@ namespace CsharpImageConverter.Core
 
                     var destHead = (byte*)pixels.PixelsPtr;
                     var destStride = pixels.Stride;
+                    var destBytesPerPixel = pixels.BytesPerPixel;
 
-                    var columnLength = bitmap.Width * bytesPerPixel;
+                    var isSameLength = srcBytesPerPixel == destBytesPerPixel;
 
-                    // BytesPerPixel の一致を前提に行を丸ごとコピー
-                    for (byte* srcPtr = srcHead, destPtr = destHead;
-                         srcPtr < srcPtrTail;
-                         srcPtr += srcStride, destPtr += destStride)
+                    if (isSameLength)
                     {
-                        UnsafeExtensions.MemCopy(destPtr, srcPtr, columnLength);
+                        // BytesPerPixel の一致を前提に行を丸ごとコピー
+                        var columnLength = bitmap.Width * srcBytesPerPixel;
+
+                        for (byte* srcPtr = srcHead, destPtr = destHead;
+                             srcPtr < srcPtrTail;
+                             srcPtr += srcStride, destPtr += destStride)
+                        {
+                            UnsafeExtensions.MemCopy(destPtr, srcPtr, columnLength);
+                        }
+                    }
+                    else
+                    {
+                        for (byte* srcPtr = srcHead, destPtr = destHead;
+                             srcPtr < srcPtrTail;
+                             srcPtr += srcStride, destPtr += destStride)
+                        {
+                            for (var x = 0; x < bitmap.Width; ++x)
+                            {
+                                *(Pixel3ch*)(destPtr + x * destBytesPerPixel) = *(Pixel3ch*)(srcPtr + x * srcBytesPerPixel);
+                            }
+                        }
                     }
                 }
             }

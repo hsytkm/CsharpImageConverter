@@ -28,10 +28,10 @@ namespace CsharpImageConverter.Benchmark
     [ShortRunJob]   // 簡易測定
     public class LoadImageFromFile
     {
-        private static readonly string _jpgPath = AppCommonSettings.JpegFilePath;
-        private static readonly string _bmpPath = AppCommonSettings.BitmapFilePath;
-        private static readonly string _pngPath = AppCommonSettings.PngFilePath;
-        private static readonly string _tifPath = AppCommonSettings.TiffFilePath;
+        private static readonly string _jpgPath = CoreContextSettings.JpegFilePath;
+        private static readonly string _bmpPath = CoreContextSettings.BitmapFilePath;
+        private static readonly string _pngPath = CoreContextSettings.PngFilePath;
+        private static readonly string _tifPath = CoreContextSettings.TiffFilePath;
 
         public LoadImageFromFile()
         {

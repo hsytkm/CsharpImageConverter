@@ -11,11 +11,13 @@ namespace CsharpImageConverter.App.ViewModels
     {
         private readonly ModelMain _model = App.Current.ModelMain;
 
-        public IReactiveProperty<BitmapSource> ImageSource { get; }
+        public IReactiveProperty<BitmapSource> ImageSource0 { get; }
+        public IReactiveProperty<BitmapSource> ImageSource1 { get; }
 
         public MainWindowViewModel()
         {
-            ImageSource = _model.ImageSource;
+            ImageSource0 = _model.ImageSource0;
+            ImageSource1 = _model.ImageSource1;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CsharpImageConverter.Benchmark
     [ShortRunJob]   // 簡易測定
     public class SaveImageToFile
     {
-        private static readonly string _sourceBitmapPath = AppCommonSettings.BitmapFilePath;
+        private static readonly string _sourceBitmapPath = CoreContextSettings.BitmapFilePath;
 
         private string _saveFilePath = default!;
         private System.Drawing.Bitmap _drawingBitmap = default!;

@@ -21,7 +21,7 @@ namespace CsharpImageConverter.Benchmark
     [ShortRunJob]   // 簡易測定
     public class DrawingBitmapToXXX
     {
-        private static readonly string _sourceBitmapPath = AppCommonSettings.BitmapFilePath;
+        private static readonly string _sourceBitmapPath = CoreContextSettings.BitmapFilePath;
 
         private System.Drawing.Bitmap _drawingBitmap = default!;
         private System.Windows.Media.Imaging.WriteableBitmap _writeableBitmap = default!;

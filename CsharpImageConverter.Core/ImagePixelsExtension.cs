@@ -73,14 +73,36 @@ namespace CsharpImageConverter.Core
 
             try
             {
-                if (bitmapData.Stride == pixels.Stride)
+                var isSameStride = bitmapData.Stride == pixels.Stride;
+
+                if (isSameStride)
                 {
                     // strideが一致していたらメモリを丸コピー
                     UnsafeExtensions.MemCopy(bitmapData.Scan0, pixels.PixelsPtr, pixels.AllocSize);
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    unsafe
+                    {
+                        var srcHead = (byte*)pixels.PixelsPtr;
+                        var srcStride = pixels.Stride;
+                        var srcBytesPerPixel = pixels.BytesPerPixel;
+                        var srcPtrTail = srcHead + (bitmap.Height * srcStride);
+
+                        var destHead = (byte*)bitmapData.Scan0;
+                        var destStride = bitmapData.Stride;
+                        var destBytesPerPixel = bitmap.GetBytesPerPixel();
+
+                        for (byte* srcPtr = srcHead, destPtr = destHead;
+                             srcPtr < srcPtrTail;
+                             srcPtr += srcStride, destPtr += destStride)
+                        {
+                            for (var x = 0; x < bitmap.Width; ++x)
+                            {
+                                *(Pixel3ch*)(destPtr + x * destBytesPerPixel) = *(Pixel3ch*)(srcPtr + x * srcBytesPerPixel);
+                            }
+                        }
+                    }
                 }
             }
             finally

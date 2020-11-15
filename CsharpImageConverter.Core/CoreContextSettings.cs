@@ -2,7 +2,7 @@
 
 namespace CsharpImageConverter.Core
 {
-    public static class AppCommonSettings
+    public static class CoreContextSettings
     {
         public static string JpegFilePath => @"Assets\image.jpg";
         public static string BitmapFilePath => @"Assets\image.bmp";

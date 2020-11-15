@@ -7,7 +7,7 @@ namespace CsharpImageConverter.Test
 {
     public class BitmapSourceTest : ImageTestBase, IDisposable
     {
-        private static readonly string _sourceBitmapPath = AppCommonSettings.BitmapFilePath;
+        private static readonly string _sourceBitmapPath = CoreContextSettings.BitmapFilePath;
 
         public BitmapSourceTest() { }
 

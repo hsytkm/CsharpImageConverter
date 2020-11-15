@@ -37,7 +37,7 @@ namespace CsharpImageConverter.Core
         public readonly bool IsInvalid() => !IsValid();
     }
 
-    public readonly struct ImagePixelsContainer : IDisposable
+    public class ImagePixelsContainer : IDisposable
     {
         public readonly ImagePixels Pixels;
         private readonly IntPtr UnmanagedPtr;
