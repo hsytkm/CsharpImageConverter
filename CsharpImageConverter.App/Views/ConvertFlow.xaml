@@ -15,7 +15,9 @@
         <vm:ConvertFlowViewModel />
     </UserControl.DataContext>
 
-    <DockPanel>
+    <DockPanel IsEnabled="False" Background="LightGray" >
+        <TextBlock DockPanel.Dock="Top" Text="Not Used" Margin="5" FontSize="14" />
+
         <DockPanel DockPanel.Dock="Top" >
             <TextBlock Text="1" />
             <ComboBox ItemsSource="{Binding InputImageFormatItems, Mode=OneWay}"
@@ -27,10 +29,6 @@
             <ComboBox ItemsSource="{Binding ConvertImageClassItems, Mode=OneWay}"
                       SelectedItem="{Binding SelectedConvertImageClass.Value, Mode=TwoWay}" />
         </DockPanel>
-
-
-
-
 
         <DockPanel DockPanel.Dock="Bottom" >
             <TextBlock Text="9" />

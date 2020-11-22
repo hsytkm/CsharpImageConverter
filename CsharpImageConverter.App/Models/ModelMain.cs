@@ -16,16 +16,16 @@ namespace CsharpImageConverter.App.Models
 
         public ModelMain()
         {
-            LoadImage0(@"Assets\flow0.png");
-            LoadImage1(@"Assets\flow1.png");
+            LoadImageFlow0(@"Assets\flow0.png");
+            LoadImageFlow1(@"Assets\flow1.png");
         }
 
-        private void LoadImage0(string path)
+        private void LoadImageFlow0(string path)
         {
             ImageSource0.Value = BitmapSourceExtension.FromFile(path);
         }
 
-        private void LoadImage1(string path)
+        private void LoadImageFlow1(string path)
         {
             var bitmapSource0 = BitmapSourceExtension.FromFile(path);
 

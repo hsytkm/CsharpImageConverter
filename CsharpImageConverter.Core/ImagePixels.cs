@@ -24,6 +24,8 @@ namespace CsharpImageConverter.Core
             AllocSize = size;
         }
 
+        public readonly bool IsContinuous() => Width * BytesPerPixel == Stride;
+
         public readonly bool IsValid()
         {
             if (PixelsPtr == IntPtr.Zero) return false;
