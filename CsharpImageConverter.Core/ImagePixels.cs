@@ -16,6 +16,9 @@ namespace CsharpImageConverter.Core
 
         public ImagePixels(int width, int height, int bytesPerPixel, int stride, IntPtr intPtr, int size)
         {
+            if (IntPtr.Size != 8) throw new NotSupportedException();
+            if (Marshal.SizeOf(typeof(ImagePixels)) != 8 + 4 * 5) throw new NotSupportedException();
+
             Width = width;
             Height = height;
             BytesPerPixel = bytesPerPixel;
@@ -24,19 +27,23 @@ namespace CsharpImageConverter.Core
             AllocSize = size;
         }
 
-        public readonly bool IsContinuous() => Width * BytesPerPixel == Stride;
+        public readonly int BitsPerPixel => BytesPerPixel * 8;
 
-        public readonly bool IsValid()
+        public readonly bool IsContinuous => Width * BytesPerPixel == Stride;
+
+        public readonly bool IsValid
         {
-            if (PixelsPtr == IntPtr.Zero) return false;
-            if (Width == 0 || Height == 0) return false;
-            if (Stride < Width * BytesPerPixel) return false;
-            if (AllocSize < Width * BytesPerPixel * Height) return false;
+            get {
+                if (PixelsPtr == IntPtr.Zero) return false;
+                if (Width == 0 || Height == 0) return false;
+                if (Stride < Width * BytesPerPixel) return false;
+                if (AllocSize < Width * BytesPerPixel * Height) return false;
 
-            return true;    //valid
+                return true;    //valid
+            }
         }
 
-        public readonly bool IsInvalid() => !IsValid();
+        public readonly bool IsInvalid => !IsValid;
     }
 
     public class ImagePixelsContainer : IDisposable

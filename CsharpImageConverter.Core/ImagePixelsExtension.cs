@@ -9,7 +9,7 @@ namespace CsharpImageConverter.Core
         /// <summary>指定エリアの画素平均値を取得します</summary>
         public static IReadOnlyCollection<double> GetChannelsAverage(in this ImagePixels pixels, int rectX, int rectY, int rectWidth, int rectHeight)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid Image");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid Image");
             if (rectWidth * rectHeight == 0) throw new ArgumentException("Area is zero.");
             if (pixels.Width < rectX + rectWidth) throw new ArgumentException("Width over.");
             if (pixels.Height < rectY + rectHeight) throw new ArgumentException("Height over.");
@@ -49,7 +49,7 @@ namespace CsharpImageConverter.Core
         /// <summary>画面全体の画素平均値を取得します</summary>
         public static IEnumerable<double> GetChannelsAverage(in this ImagePixels pixels)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid Image");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid Image");
             return GetChannelsAverage(pixels, 0, 0, pixels.Width, pixels.Height);
         }
         #endregion
@@ -59,7 +59,7 @@ namespace CsharpImageConverter.Core
         /// <summary>System.Drawing.Bitmap に変換します</summary>
         public static System.Drawing.Bitmap ToDrawingBitmap(this in ImagePixels pixels)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var bitmap = new System.Drawing.Bitmap(pixels.Width, pixels.Height,
@@ -116,7 +116,7 @@ namespace CsharpImageConverter.Core
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
         public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this in ImagePixels pixels)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
@@ -134,7 +134,7 @@ namespace CsharpImageConverter.Core
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します(遅いです)</summary>
         public static void CopyToWriteableBitmap(this in ImagePixels pixels, System.Windows.Media.Imaging.WriteableBitmap writeableBitmap)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid Image");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid Image");
             if (writeableBitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
             if (writeableBitmap.PixelWidth != pixels.Width) throw new ArgumentException("Different Width");
             if (writeableBitmap.PixelHeight != pixels.Height) throw new ArgumentException("Different Height");
@@ -150,7 +150,7 @@ namespace CsharpImageConverter.Core
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap に変換します</summary>
         public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(this in ImagePixels pixels)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
@@ -169,7 +169,7 @@ namespace CsharpImageConverter.Core
         /// <summary>SixLabors.ImageSharp.Image に変換します</summary>
         public static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgr24> ToImageSharpBgr24(this in ImagePixels pixels)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Bgr24>(pixels.Width, pixels.Height);

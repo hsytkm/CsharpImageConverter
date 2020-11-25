@@ -6,13 +6,10 @@ namespace CsharpImageConverter.Core
 {
     public static class ImagePixelsExtensions2
     {
-        /// <summary>
-        /// 画像をbmpファイルに保存します
-        /// 画像サイズによっては正常に動作してない気がするのでオススメしません…
-        /// </summary>
+        /// <summary>画像をbmpファイルに保存します</summary>
         public static void ToBmpFile(this in ImagePixels pixels, string savePath)
         {
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid ImagePixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
 
             var bs = GetBitmapBinary(pixels);
             using var ms = new MemoryStream(bs);
@@ -27,15 +24,13 @@ namespace CsharpImageConverter.Core
             {
                 var width = pixels.Width;
                 var height = pixels.Height;
-                var stride = pixels.Stride;
-                var pixelsSize = pixels.AllocSize;
+                var srcStride = pixels.Stride;
 
-                var header = new BitmapHeader(width, height, pixelsSize, pixels.BytesPerPixel);
-                var headerSize = Marshal.SizeOf(header);
-                var destBuffer = new byte[headerSize + pixelsSize];
+                var destHeader = new BitmapHeader(width, height, pixels.BitsPerPixel);
+                var destBuffer = new byte[destHeader.FileSize];
 
                 // bufferにheaderを書き込む
-                UnsafeExtensions.CopyStructToArray(header, destBuffer);
+                UnsafeExtensions.CopyStructToArray(destHeader, destBuffer);
 
                 // 画素は左下から右上に向かって記録する
                 unsafe
@@ -43,12 +38,15 @@ namespace CsharpImageConverter.Core
                     var srcHead = (byte*)pixels.PixelsPtr.ToPointer();
                     fixed (byte* pointer = destBuffer)
                     {
-                        var destHead = pointer + headerSize;
+                        var destHead = pointer + destHeader.OffsetBytes;
+                        var destStride = destHeader.ImageStride;
+                        System.Diagnostics.Debug.Assert(srcStride <= destStride);
+
                         for (var y = 0; y < height; ++y)
                         {
-                            var src = srcHead + (height - 1 - y) * stride;
-                            var dest = destHead + (y * stride);
-                            UnsafeExtensions.MemCopy(dest, src, stride);
+                            var src = srcHead + (height - 1 - y) * srcStride;
+                            var dest = destHead + (y * destStride);
+                            UnsafeExtensions.MemCopy(dest, src, srcStride);
                         }
                     }
                 }
@@ -81,15 +79,15 @@ namespace CsharpImageConverter.Core
         public readonly Int32 ClrUsed;
         public readonly Int32 CirImportant;
 
-        public BitmapHeader(int width, int height, int pixelsSize, int bytesPerBits)
+        public BitmapHeader(int width, int height, int bitsPerPixel)
         {
             var fileHeaderSize = 14;
             var infoHeaderSize = 40;
             var totalHeaderSize = fileHeaderSize + infoHeaderSize;
-            var fileSize = totalHeaderSize + pixelsSize;
+            var imageSize = GetImageSize(width, height, bitsPerPixel);
 
             FileType = 0x4d42;  // 'B','M'
-            FileSize = fileSize;
+            FileSize = totalHeaderSize + imageSize;
             Reserved1 = 0;
             Reserved2 = 0;
             OffsetBytes = totalHeaderSize;
@@ -98,13 +96,26 @@ namespace CsharpImageConverter.Core
             Width = width;
             Height = height;
             Planes = 1;
-            BitCount = (Int16)(bytesPerBits * 8);
+            BitCount = (Int16)bitsPerPixel;
             Compression = 0;
-            SizeImage = pixelsSize;
-            XPixPerMete = 0;
-            YPixPerMete = 0;
+            SizeImage = imageSize;
+            XPixPerMete = 0;        // 適切な値を設定したいけど理解していない…
+            YPixPerMete = 0;        // 適切な値を設定したいけど理解していない…
             ClrUsed = 0;
             CirImportant = 0;
         }
+
+        public int ImageStride => GetImageStride(Width, BitCount);
+
+        private static int Ceiling(int value, int align) => (value + (align - 1)) / align;
+
+        private static int GetImageStride(int width, int bitsPerPixel)
+        {
+            var bytesPerPixel = Ceiling(bitsPerPixel, 8);
+            return Ceiling(width * bytesPerPixel, 4) * 4;   // strideは4の倍数
+        }
+
+        private static int GetImageSize(int width, int height, int bitsPerPixel)
+            => GetImageStride(width, bitsPerPixel) * height;
     }
 }

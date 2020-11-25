@@ -237,7 +237,7 @@ namespace CsharpImageConverter.Core
         public static void CopyToImagePixels(this BitmapSource bitmap, ref ImagePixels pixels)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-            if (pixels.IsInvalid()) throw new ArgumentException("Invalid Pixels");
+            if (pixels.IsInvalid) throw new ArgumentException("Invalid Pixels");
             if (bitmap.PixelWidth != pixels.Width) throw new ArgumentException("Different Width");
             if (bitmap.PixelHeight != pixels.Height) throw new ArgumentException("Different Height");
             if (bitmap.GetBytesPerPixel() < pixels.BytesPerPixel) throw new ArgumentException("Invalid BytesPerPixel");
