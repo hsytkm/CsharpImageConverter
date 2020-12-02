@@ -62,53 +62,64 @@ namespace CsharpImageConverter.Core
             if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
             if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
 
-            var bitmap = new System.Drawing.Bitmap(pixels.Width, pixels.Height,
-                System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            var bitmapData = bitmap.LockBits(
-                new System.Drawing.Rectangle(System.Drawing.Point.Empty, bitmap.Size), 
-                System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
-
-            try
+            if (pixels.Stride % 4 == 0)
             {
-                var isSameStride = bitmapData.Stride == pixels.Stride;
+                // こちらの方がLockBitsしない分だけ早い https://zenn.dev/kaiyu/articles/38cd39772b60df
+                return new System.Drawing.Bitmap(
+                    pixels.Width, pixels.Height, pixels.Stride,
+                    System.Drawing.Imaging.PixelFormat.Format24bppRgb,
+                    pixels.PixelsPtr);
+            }
+            else
+            {
+                var bitmap = new System.Drawing.Bitmap(pixels.Width, pixels.Height,
+                    System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
-                if (isSameStride)
+                var bitmapData = bitmap.LockBits(
+                    new System.Drawing.Rectangle(System.Drawing.Point.Empty, bitmap.Size),
+                    System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
+
+                try
                 {
-                    // strideが一致していたらメモリを丸コピー
-                    UnsafeExtensions.MemCopy(bitmapData.Scan0, pixels.PixelsPtr, pixels.AllocSize);
-                }
-                else
-                {
-                    unsafe
+                    var isSameStride = bitmapData.Stride == pixels.Stride;
+
+                    if (isSameStride)
                     {
-                        var srcHead = (byte*)pixels.PixelsPtr;
-                        var srcStride = pixels.Stride;
-                        var srcBytesPerPixel = pixels.BytesPerPixel;
-                        var srcPtrTail = srcHead + (bitmap.Height * srcStride);
-
-                        var destHead = (byte*)bitmapData.Scan0;
-                        var destStride = bitmapData.Stride;
-                        var destBytesPerPixel = bitmap.GetBytesPerPixel();
-
-                        for (byte* srcPtr = srcHead, destPtr = destHead;
-                             srcPtr < srcPtrTail;
-                             srcPtr += srcStride, destPtr += destStride)
+                        // strideが一致していたらメモリを丸コピー
+                        UnsafeExtensions.MemCopy(bitmapData.Scan0, pixels.PixelsPtr, pixels.AllocSize);
+                    }
+                    else
+                    {
+                        unsafe
                         {
-                            for (var x = 0; x < bitmap.Width; ++x)
+                            var srcHead = (byte*)pixels.PixelsPtr;
+                            var srcStride = pixels.Stride;
+                            var srcBytesPerPixel = pixels.BytesPerPixel;
+                            var srcPtrTail = srcHead + (bitmap.Height * srcStride);
+
+                            var destHead = (byte*)bitmapData.Scan0;
+                            var destStride = bitmapData.Stride;
+                            var destBytesPerPixel = bitmap.GetBytesPerPixel();
+
+                            for (byte* srcPtr = srcHead, destPtr = destHead;
+                                 srcPtr < srcPtrTail;
+                                 srcPtr += srcStride, destPtr += destStride)
                             {
-                                *(Pixel3ch*)(destPtr + x * destBytesPerPixel) = *(Pixel3ch*)(srcPtr + x * srcBytesPerPixel);
+                                for (var x = 0; x < bitmap.Width; ++x)
+                                {
+                                    *(Pixel3ch*)(destPtr + x * destBytesPerPixel) = *(Pixel3ch*)(srcPtr + x * srcBytesPerPixel);
+                                }
                             }
                         }
                     }
                 }
-            }
-            finally
-            {
-                bitmap.UnlockBits(bitmapData);
-            }
+                finally
+                {
+                    bitmap.UnlockBits(bitmapData);
+                }
 
-            return bitmap;
+                return bitmap;
+            }
         }
         #endregion
 
