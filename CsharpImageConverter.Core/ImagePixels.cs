@@ -49,14 +49,19 @@ namespace CsharpImageConverter.Core
     public class ImagePixelsContainer : IDisposable
     {
         public readonly ImagePixels Pixels;
-        private IntPtr _allocatedMemoryPointer;
+        private readonly IntPtr _allocatedMemoryPointer;
+        private readonly int _allocatedSize;
+        private bool _disposed;
 
         private ImagePixelsContainer(int width, int height, int bytesPerPixels)
         {
             var stride = width * bytesPerPixels;
             var size = stride * height;
 
+            _allocatedSize = size;
             _allocatedMemoryPointer = Marshal.AllocCoTaskMem(size);
+            GC.AddMemoryPressure(size);
+
             Pixels = new ImagePixels(width, height, bytesPerPixels, stride, _allocatedMemoryPointer, size);
         }
 
@@ -64,10 +69,12 @@ namespace CsharpImageConverter.Core
 
         public void Dispose()
         {
-            if (_allocatedMemoryPointer != IntPtr.Zero)
+            if (!_disposed)
             {
                 Marshal.FreeCoTaskMem(_allocatedMemoryPointer);
-                _allocatedMemoryPointer = IntPtr.Zero;
+                GC.RemoveMemoryPressure(_allocatedSize);
+
+                _disposed = true;
             }
         }
     }
