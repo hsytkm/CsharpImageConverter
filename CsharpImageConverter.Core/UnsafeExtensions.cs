@@ -51,19 +51,21 @@ namespace CsharpImageConverter.Core
         }
         #endregion
 
-        /// <summary>構造体をシリアライズして byte[] に書き出します</summary>
-        public static void CopyStructToArray<T>(T srcData, byte[] destArray) where T : struct
+        /// <summary>構造体を byte[] に書き出します</summary>
+        public static void CopyStructToArray<T>(T srcData, Span<byte> destArray) where T : unmanaged
         {
+            // unsafe is faster than Marshal.Copy and GCHandle.
+            // https://gist.github.com/hsytkm/55b9bdfaa3eae18fcc1b91449cf16998
+
             var size = Marshal.SizeOf<T>();
-            var ptr = Marshal.AllocCoTaskMem(size);
-            try
+            if (size > destArray.Length) throw new ArgumentOutOfRangeException();
+
+            unsafe
             {
-                Marshal.StructureToPtr(srcData, ptr, false);
-                Marshal.Copy(ptr, destArray, 0, size);
-            }
-            finally
-            {
-                Marshal.FreeCoTaskMem(ptr);
+                fixed (byte* p = destArray)
+                {
+                    *(T*)p = srcData;
+                }
             }
         }
 

@@ -53,5 +53,30 @@ namespace CsharpImageConverter.Test
             aves30.Is(avesBase);
 
         }
+
+        [Theory]
+        [MemberData(nameof(GetUncompressedImageFilePaths))]
+        public void FileLoadSave(string imagePath, string extension)
+        {
+            // 画像ファイルを Load -> Save -> Load して画素平均値を比較する
+            using var bitmap0 = DrawingBitmapExtension.FromFile(imagePath);
+            var baseAves = bitmap0.GetChannelsAverage().ToList();
+
+            var savePath = GetTempFileName() + extension;
+
+            try
+            {
+                using var container = bitmap0.ToImagePixelsContainer();
+                container.Pixels.ToBmpFile(savePath);
+
+                using var bitmap1 = DrawingBitmapExtension.FromFile(savePath);
+                var newAves = bitmap1.GetChannelsAverage().ToList();
+                newAves.Is(baseAves.Take(3));       // 3chに揃える
+            }
+            finally
+            {
+                System.IO.File.Delete(savePath);    // Dispose後に消す
+            }
+        }
     }
 }
