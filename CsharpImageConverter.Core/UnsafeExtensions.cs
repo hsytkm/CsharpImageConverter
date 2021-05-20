@@ -30,14 +30,14 @@ namespace CsharpImageConverter.Core
 
             while (destPtr + 7 < tail)
             {
-                *(ulong*)destPtr = *(ulong*)src;
+                *(ulong*)destPtr = *(ulong*)srcPtr;
                 srcPtr += 8;
                 destPtr += 8;
             }
 
             if (destPtr + 3 < tail)
             {
-                *(uint*)destPtr = *(uint*)src;
+                *(uint*)destPtr = *(uint*)srcPtr;
                 srcPtr += 4;
                 destPtr += 4;
             }
@@ -67,6 +67,12 @@ namespace CsharpImageConverter.Core
                     *(T*)p = srcData;
                 }
             }
+        }
+
+        /// <summary>構造体を IntPtr に書き出します</summary>
+        public static unsafe void WriteStructureToPtr<T>(IntPtr dest, in T data) where T : unmanaged
+        {
+            *((T*)dest) = data;
         }
 
     }

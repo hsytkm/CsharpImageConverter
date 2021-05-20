@@ -79,6 +79,8 @@ namespace CsharpImageConverter.Core
         public readonly Int32 ClrUsed;
         public readonly Int32 CirImportant;
 
+        private const Int32 _pixelPerMeter = 3780;    // pixel/meter (96dpi / 2.54cm * 100m)
+
         public BitmapHeader(int width, int height, int bitsPerPixel)
         {
             var fileHeaderSize = 14;
@@ -98,9 +100,9 @@ namespace CsharpImageConverter.Core
             Planes = 1;
             BitCount = (Int16)bitsPerPixel;
             Compression = 0;
-            SizeImage = imageSize;
-            XPixPerMete = 0;        // 適切な値を設定したいけど理解していない…
-            YPixPerMete = 0;        // 適切な値を設定したいけど理解していない…
+            SizeImage = 0;      // 無圧縮の場合、ファイルサイズでなく 0 を設定するみたい
+            XPixPerMete = _pixelPerMeter;
+            YPixPerMete = _pixelPerMeter;
             ClrUsed = 0;
             CirImportant = 0;
         }
