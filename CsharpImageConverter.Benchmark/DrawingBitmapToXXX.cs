@@ -32,7 +32,7 @@ namespace CsharpImageConverter.Benchmark
         {
             _drawingBitmap = DrawingBitmapExtension.FromFile(_sourceBitmapPath);
             _writeableBitmap = _drawingBitmap.ToWriteableBitmap();
-            _container = new ImagePixelsContainer(_drawingBitmap.Width, _drawingBitmap.Height);
+            _container = new ImagePixelsContainer(_drawingBitmap.Width, _drawingBitmap.Height, _drawingBitmap.GetBytesPerPixel());
         }
 
         [GlobalCleanup]

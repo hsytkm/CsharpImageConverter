@@ -53,8 +53,12 @@ namespace CsharpImageConverter.Core
         private readonly int _allocatedSize;
         private bool _disposed;
 
-        private ImagePixelsContainer(int width, int height, int bytesPerPixels)
+        public ImagePixelsContainer(int width, int height, int bytesPerPixels)
         {
+            // Alpha付いてたら除去します(無理やりでイマイチです…)
+            if (bytesPerPixels == 4)
+                bytesPerPixels = 3;
+
             var stride = width * bytesPerPixels;
             var size = stride * height;
 
@@ -64,8 +68,6 @@ namespace CsharpImageConverter.Core
 
             Pixels = new ImagePixels(width, height, bytesPerPixels, stride, _allocatedMemoryPointer, size);
         }
-
-        public ImagePixelsContainer(int width, int height) : this(width, height, 3) { }
 
         public void Dispose()
         {

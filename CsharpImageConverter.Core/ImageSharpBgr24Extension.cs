@@ -209,7 +209,8 @@ namespace CsharpImageConverter.Core
         {
             if (image.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new ImagePixelsContainer(image.Width, image.Height);
+            int size = Unsafe.SizeOf<Bgr24>();
+            var container = new ImagePixelsContainer(image.Width, image.Height, size);
             var pixels = container.Pixels;
             CopyToImagePixels(image, ref pixels);
 

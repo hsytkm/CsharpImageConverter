@@ -31,7 +31,7 @@ namespace CsharpImageConverter.Benchmark
         {
             _imageSharp = ImageSharpBgr24Extension.FromFile(_sourceBitmapPath);
             _writeableBitmap = _imageSharp.ToWriteableBitmap();
-            _container = new ImagePixelsContainer(_imageSharp.Width, _imageSharp.Height);
+            _container = new ImagePixelsContainer(_imageSharp.Width, _imageSharp.Height, _imageSharp.GetBytesPerPixel());
         }
 
         [GlobalCleanup]

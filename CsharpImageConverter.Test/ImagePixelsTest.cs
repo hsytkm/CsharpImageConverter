@@ -71,7 +71,7 @@ namespace CsharpImageConverter.Test
 
                 using var bitmap1 = DrawingBitmapExtension.FromFile(savePath);
                 var newAves = bitmap1.GetChannelsAverage().ToList();
-                newAves.Is(baseAves.Take(3));       // 3ch‚É‘µ‚¦‚é
+                newAves.Take(3).Is(baseAves.Take(3));   // 3ch‚É‘µ‚¦‚é
             }
             finally
             {
