@@ -60,20 +60,26 @@ namespace CsharpImageConverter.Core
         public static System.Drawing.Bitmap ToDrawingBitmap(this in ImagePixels pixels)
         {
             if (pixels.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
-            if (pixels.BytesPerPixel != 3) throw new NotSupportedException("Invalid BytesPerPixel");
+
+            System.Drawing.Imaging.PixelFormat pixelFormat = pixels.BytesPerPixel switch
+            {
+                1 => System.Drawing.Imaging.PixelFormat.Format8bppIndexed,
+                3 => System.Drawing.Imaging.PixelFormat.Format24bppRgb,
+                _ => throw new NotImplementedException($"Invalid BytesPerPixel. ({pixels.BytesPerPixel})")
+            };
+
+            System.Drawing.Bitmap destBitmap;
 
             if (pixels.Stride % 4 == 0)
             {
                 // こちらの方がLockBitsしない分だけ早い https://zenn.dev/kaiyu/articles/38cd39772b60df
-                return new System.Drawing.Bitmap(
+                destBitmap = new System.Drawing.Bitmap(
                     pixels.Width, pixels.Height, pixels.Stride,
-                    System.Drawing.Imaging.PixelFormat.Format24bppRgb,
-                    pixels.PixelsPtr);
+                    pixelFormat, pixels.PixelsPtr);
             }
             else
             {
-                var bitmap = new System.Drawing.Bitmap(pixels.Width, pixels.Height,
-                    System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                var bitmap = new System.Drawing.Bitmap(pixels.Width, pixels.Height, pixelFormat);
 
                 var bitmapData = bitmap.LockBits(
                     new System.Drawing.Rectangle(System.Drawing.Point.Empty, bitmap.Size),
@@ -118,8 +124,21 @@ namespace CsharpImageConverter.Core
                     bitmap.UnlockBits(bitmapData);
                 }
 
-                return bitmap;
+                destBitmap = bitmap;
             }
+
+            // 8bitグレー画像ではカラーパレットを設定しないと異常なカラフル画像になります。
+            if (destBitmap.PixelFormat is System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+            {
+                System.Drawing.Imaging.ColorPalette palette = destBitmap.Palette;
+                for (int i = 0; i < 256; i++)
+                {
+                    palette.Entries[i] = System.Drawing.Color.FromArgb(i, i, i);
+                }
+                destBitmap.Palette = palette;
+            }
+
+            return destBitmap;
         }
         #endregion
 

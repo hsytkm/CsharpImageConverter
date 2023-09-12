@@ -256,16 +256,36 @@ namespace CsharpImageConverter.Core
                 {
                     var tail = head + bs.Length;
 
-                    for (var y = 0; y < bitmap.PixelHeight; ++y)
+                    switch (pixels.BytesPerPixel)
                     {
-                        rect1Line.Y = y;
-                        bitmap.CopyPixels(rect1Line, bs, bs.Length, 0);
+                        case 3:
+                            for (var y = 0; y < bitmap.PixelHeight; ++y)
+                            {
+                                rect1Line.Y = y;
+                                bitmap.CopyPixels(rect1Line, bs, bs.Length, 0);
 
-                        var dest = (Pixel3ch*)(destHead + y * pixels.Stride);
-                        for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
-                        {
-                            *(dest++) = *((Pixel3ch*)ptr);
-                        }
+                                var dest = (Pixel3ch*)(destHead + y * pixels.Stride);
+                                for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
+                                {
+                                    *(dest++) = *((Pixel3ch*)ptr);
+                                }
+                            }
+                            break;
+                        case 1:
+                            for (var y = 0; y < bitmap.PixelHeight; ++y)
+                            {
+                                rect1Line.Y = y;
+                                bitmap.CopyPixels(rect1Line, bs, bs.Length, 0);
+
+                                byte* dest = (destHead + y * pixels.Stride);
+                                for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
+                                {
+                                    *(dest++) = *ptr;
+                                }
+                            }
+                            break;
+                        default:
+                            throw new NotImplementedException();
                     }
                 }
             }
